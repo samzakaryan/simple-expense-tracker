@@ -3,6 +3,8 @@ from datetime import datetime
 categories = []
 expenses = []
 account = 0
+currency = "$"
+currencies = {"US Dollar":"$", "Euro":"€", "British Pound Sterling":"£", "Japanese Yen":"¥", "Armenian dram":"֏"}
 
 with open('categories.txt', 'r') as file:
     categories = [line.strip() for line in file]
@@ -62,6 +64,34 @@ def view_categories():
     for i in range(len(categories)):
         print(f"  {i + 1}. {categories[i]}")
     print("-" * 50)
+
+def choose_currency():
+    global currency
+    print("\n" + "=" * 50)
+    print("  CHOOSE CURRENCY")
+    print("=" * 50)
+
+    currency_keys = list(currencies.keys())
+
+    while True:
+        for i, code in enumerate(currency_keys, start=1):
+            print(f"{i}. {code} - {currencies[code]}")
+
+        user_input = input("Choose currency by number: ").strip()
+
+        try:
+            choice = int(user_input)
+        except ValueError:
+            print("Wrong input. Please enter a number.\n")
+            continue
+
+        if 1 <= choice <= len(currency_keys):
+            selected_code = currency_keys[choice - 1]
+            currency = currencies[selected_code]
+            print(f"Currency set to {selected_code} - {currency}\n")
+            break
+        else:
+            print("Wrong input. Number out of range.\n")
     
 def add_expense():
     global account
@@ -88,9 +118,9 @@ def add_expense():
         return
     
     try:
-        user_expense = int(input("Enter expense amount: $"))
+        user_expense = int(input(f"Enter expense amount: {currency}"))
         while user_expense < 1:
-            user_expense = int(input("Invalid amount. Try again: $"))
+            user_expense = int(input(f"Invalid amount. Try again: {currency}"))
     except ValueError:
         print("Wrong input")
         return
@@ -98,8 +128,8 @@ def add_expense():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     expenses.append(f"{-user_expense}:{expense_category}:{timestamp}")
     account -= user_expense
-    print(f"\nExpense of ${user_expense} added to '{expense_category}'")
-    print(f"New balance: ${account}")
+    print(f"\nExpense of {currency}{user_expense} added to '{expense_category}'")
+    print(f"New balance: {currency}{account}")
 
 def add_income():
     global account
@@ -126,9 +156,9 @@ def add_income():
         return
     
     try:
-        user_income = int(input("Enter income amount: $"))
+        user_income = int(input(f"Enter income amount: {currency}"))
         while user_income < 1:
-            user_income = int(input("Invalid amount. Try again: $"))
+            user_income = int(input(f"Invalid amount. Try again: {currency}"))
     except ValueError:
         print("Wrong input")
         return
@@ -136,8 +166,8 @@ def add_income():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     expenses.append(f"{user_income}:{income_category}:{timestamp}")
     account += user_income
-    print(f"\nIncome of ${user_income} added to '{income_category}'")
-    print(f"New balance: ${account}")
+    print(f"\nIncome of {currency}{user_income} added to '{income_category}'")
+    print(f"New balance: {currency}{account}")
 
 def save_data():
     with open('categories.txt', 'w') as file:
@@ -161,9 +191,10 @@ def main_menu():
         print("  3. View Categories")
         print("  4. Add Expense")
         print("  5. Add Income")
-        print("  6. Quit")
+        print("  6. Choose Currency")
+        print("  7. Quit")
         print("-" * 50)
-        print(f"  Current Balance: ${account}")
+        print(f"  Current Balance: {currency}{account}")
         print("-" * 50)
         
         choice = input("\nChoose an option: ")
@@ -179,6 +210,8 @@ def main_menu():
         elif choice == "5":
             add_income()
         elif choice == "6":
+            choose_currency()
+        elif choice == "7":
             save_data()
             print("\n" + "=" * 50)
             print("Data saved successfully!")
