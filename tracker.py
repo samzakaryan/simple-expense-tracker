@@ -1,3 +1,5 @@
+from datetime import datetime
+
 categories = []
 expenses = []
 account = 0
@@ -93,7 +95,8 @@ def add_expense():
         print("Wrong input")
         return
     
-    expenses.append(f"{-1 * user_expense}:{expense_category}")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    expenses.append(f"{-user_expense}:{expense_category}:{timestamp}")
     account -= user_expense
     print(f"\nExpense of ${user_expense} added to '{expense_category}'")
     print(f"New balance: ${account}")
@@ -130,7 +133,8 @@ def add_income():
         print("Wrong input")
         return
     
-    expenses.append(f"{user_income}:{income_category}")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    expenses.append(f"{user_income}:{income_category}:{timestamp}")
     account += user_income
     print(f"\nIncome of ${user_income} added to '{income_category}'")
     print(f"New balance: ${account}")
